@@ -3,7 +3,7 @@
 
 void configTest() {
     int size = 4;
-    graph newGraph = сreateNewGraph(size);
+    graph newGraph = createNewGraph(size);
     assert(getSize(newGraph) == size);
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -15,7 +15,7 @@ void configTest() {
 
 void addNewEdgeTest() {
     int size = 4;
-    graph newGraph = сreateNewGraph(size);
+    graph newGraph = createNewGraph(size);
     addNewEdge(0, 1, 1, newGraph);
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -34,7 +34,7 @@ void addNewEdgeTest() {
 
 void deleteEdgeTest() {
     int size = 4;
-    graph newGraph = сreateNewGraph(size);
+    graph newGraph = createNewGraph(size);
     addNewEdge(0, 1, 33, newGraph);
     addNewEdge(1, 2, 2, newGraph);
     addNewEdge(1, 3, 55, newGraph);
@@ -50,7 +50,7 @@ void deleteEdgeTest() {
 
 void addNewVertexTest() {
     int size = 4;
-    graph newGraph = сreateNewGraph(size);
+    graph newGraph = createNewGraph(size);
     addNewEdge(0, 1, 1152, newGraph);
     addNewEdge(1, 2, 14343, newGraph);
     addNewEdge(1, 3, 563451, newGraph);
@@ -68,7 +68,7 @@ void addNewVertexTest() {
 
 void deleteVertexTest() {
     int size = 4;
-    graph newGraph = сreateNewGraph(size);
+    graph newGraph = createNewGraph(size);
     addNewEdge(0, 1, 1241, newGraph);
     addNewEdge(0, 3, 14234, newGraph);
     addNewEdge(1, 2, 15433, newGraph);
@@ -84,7 +84,7 @@ void deleteVertexTest() {
 
 void findMinLengthTest() {
     int size = 4;
-    graph newGraph = сreateNewGraph(size);
+    graph newGraph = createNewGraph(size);
     int *distance = (int *)malloc(size * sizeof(int));
     bool *is_visited = (bool *)malloc(size * sizeof(bool));
     addNewEdge(1, 2, 23, newGraph);

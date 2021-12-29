@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     for (int i = 0; !feof(edges_file); i++) {   //Макросом feof() контролируется указатель положения в файле, когда он доходит до конца файла, происходит выход из цикла
          fscanf(edges_file, "%d", &numbers[i]);  //В массив numbers записываются значения из файла edges
     }
-    graph graph = сreateNewGraph(graph_size);         //Создаем граф
+    graph graph = createNewGraph(graph_size);         //Создаем граф
     for (int k = 0; k < edges_amount; k += 3) {
         addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph); //Добавляем рёбра
     }

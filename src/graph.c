@@ -3,7 +3,7 @@
 /*
  * Функция инициализации графа размерности size
  */
-graph сreateNewGraph(int size) {
+graph createNewGraph(int size) {
     graph new_graph;
     new_graph = malloc(sizeof(*new_graph));
     new_graph->size = size;
