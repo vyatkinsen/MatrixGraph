@@ -7,12 +7,12 @@
 #include <limits.h>
 #include <stdbool.h>
 
-struct graph_structure {
+struct graphStructure {
     int** matrix;
     int size;
 };
 
-typedef struct graph_structure *graph;
+typedef struct graphStructure *graph;
 
 graph сreateNewGraph(int size); //создание графа размерности size
 void addNewEdge(int vertex1, int vertex2, int weight, graph current_graph); //добавление ребра между 2 вершинами с определенным весом
