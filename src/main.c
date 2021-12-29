@@ -14,8 +14,6 @@
  * -way /optional/ (в выходной файл будут записаны кратчайшие пути для указанной через пробел вершины);
  */
 int main(int argc, char *argv[]) {
-    int graph_size, edges_amount;
-    char *pntr;
     if ((argc == 2) && (*argv[1] == *"-test")) { //При указанном флаге -test запускаем тесты
         startTests();
         return 0;
@@ -23,17 +21,25 @@ int main(int argc, char *argv[]) {
         printf("\nIncorrect command line arguments\n");
         return -1;
     }
-    graph_size = (int) strtol(argv[1], &pntr, 10);
-    edges_amount = (int) strtol(argv[2], &pntr, 10);
+
+    int graph_size, edges_amount;
+    char *pntr;
+    FILE *edges_file, *output_file;
 //    sscanf(argv[1], "%d", &graph_size);  //Размер графа
 //    sscanf(argv[2], "%d", &edges_amount);  //Кол-во пар переходов между вершинами
+    graph_size = (int) strtol(argv[1], &pntr, 10);
+    edges_amount = (int) strtol(argv[2], &pntr, 10);
     edges_amount *= 3;
     int *numbers = (int *)malloc(edges_amount * sizeof(int));
-    FILE *edges_file;
-    FILE *output_file;
+
     edges_file = fopen(argv[3], "rt"); //Открываем текстовый файл для чтения
+    if (edges_file == NULL) {
+        printf("\nInput file does not exist\n");
+        return -1;
+    }
+
     for (int i = 0; !feof(edges_file); i++) {   //Макросом feof() контролируется указатель положения в файле, когда он доходит до конца файла, происходит выход из цикла
-        fscanf(edges_file, "%d", &numbers[i]);  //В массив numbers записываются значения из файла edges
+         fscanf(edges_file, "%d", &numbers[i]);  //В массив numbers записываются значения из файла edges
     }
     graph graph = сreateNewGraph(graph_size);         //Создаем граф
     for (int k = 0; k < edges_amount; k += 3) {
@@ -41,11 +47,17 @@ int main(int argc, char *argv[]) {
     }
     free(numbers); //Освобождаем память
     fclose(edges_file);
+
     output_file = fopen(argv[4], "w"); //Создаем текстовый файл для записи
+    if (output_file == NULL) {
+        printf("\nInput file does not exist\n");
+        return -1;
+    }
     printGraphFile(graph, output_file); //Выводим граф в виде матрицы в файл
     if ((argc == 7) && (*argv[5] == *"-way")) { //При указанном флаге -way ищем кратчайшие пути для указанного в *argv[6] вершины
         int start_vertex;
-        sscanf(argv[6], "%d", &start_vertex);  //Размер графа
+//        sscanf(argv[6], "%d", &start_vertex);  //Размер графа
+        start_vertex = (int) strtol(argv[6], &pntr, 10);
         if (start_vertex < graph_size) {
             int *distance = (int *)malloc(graph_size * sizeof(int));
             bool *is_visited = (bool *)malloc(graph_size * sizeof(bool));
