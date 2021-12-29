@@ -1,8 +1,13 @@
+#ifndef MATRIXGRAPH_TEST_H
+#define MATRIXGRAPH_TEST_H
+
 #include <stdio.h>
-void Config_Test();
-void AddEdge_Test();
-void RemoveEdge_Test();
-void AddVertex_Test();
-void RemoveVertex_Test();
-void FindMinLength_Test();
-int StartTests();
+
+void configTest();
+void addNewEdgeTest();
+void deleteEdgeTest();
+void addNewVertexTest();
+void deleteVertexTest();
+void findMinLengthTest();
+int startTests();
+#endif //MATRIXGRAPH_TEST_H

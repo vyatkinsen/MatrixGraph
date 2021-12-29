@@ -3,7 +3,7 @@
 /*
  * Функция инициализации графа размерности size
  */
-graph CreateGraph(int size) {
+graph сreateNewGraph(int size) {
     graph new_graph;
     new_graph = malloc(sizeof(*new_graph));
     new_graph->size = size;
@@ -22,18 +22,18 @@ graph CreateGraph(int size) {
 /*
  * Функция деинициализации матрицы графа (освобождение памяти)
  */
-void DeinitializeMatrix(int **current_graph, int size) {
+void freeMatrix(int **matrix, int size) {
     for (int i = 0; i < size; i++) {
-        free(current_graph[i]);
+        free(matrix[i]);
     }
-    free(current_graph);
+    free(matrix);
 }
 
 /*
  * Функция деинициализации графа (освобождение памяти)
  */
-void DeinitializeGraph(graph current_graph) {
-    DeinitializeMatrix(current_graph->matrix, current_graph->size);
+void freeGraph(graph current_graph) {
+    freeMatrix(current_graph->matrix, current_graph->size);
     free(current_graph);
 }
 
@@ -41,7 +41,7 @@ void DeinitializeGraph(graph current_graph) {
  * Функция добавления ребра между 2 вершинами (vertex1, vertex2)
  * с определенным положительным весом (weight), в определенном графе (current_graph)
  */
-void AddEdge(int vertex1, int vertex2, int weight, graph current_graph) {
+void addNewEdge(int vertex1, int vertex2, int weight, graph current_graph) {
     if ((vertex2 < current_graph->size) && (vertex1 < current_graph->size) && (weight > 0)) {
         current_graph->matrix[vertex1][vertex2] = weight;
         current_graph->matrix[vertex2][vertex1] = weight;
@@ -51,7 +51,7 @@ void AddEdge(int vertex1, int vertex2, int weight, graph current_graph) {
 /*
  * Функция удаления ребра между 2 вершинами (vertex1, vertex2) в определенном графе (current_graph)
  */
-void RemoveEdge(int vertex1, int vertex2, graph current_graph) {
+void deleteEdge(int vertex1, int vertex2, graph current_graph) {
     if ((vertex2 < current_graph->size) && (vertex1 < current_graph->size)) {
         current_graph->matrix[vertex1][vertex2] = 0;
         current_graph->matrix[vertex2][vertex1] = 0;
@@ -61,28 +61,28 @@ void RemoveEdge(int vertex1, int vertex2, graph current_graph) {
 /*
  * Функция добавления вершины в определенном графе (current_graph)
  */
-void AddVertex(graph current_graph) {
+void addNewVertex(graph current_graph) {
     int size = current_graph->size + 1;
     int **array = (int **)malloc(size * sizeof(int *));
-    for(int i = 0; i < size; i++){
+    for (int i = 0; i < size; i++) {
         array[i] = (int *)malloc(size*sizeof(int));
     }
     for (int i = 0; i < size; i++){
         for (int j = 0; j < size; j++){
-            if ((j == size - 1) || (i == size - 1)) {
-                array[i][j] = 0;
+            if ((i == size - 1) || (j == size - 1)) {
+                array[i][j] = 0;    //Заполняем нулями последние пустые ячейки в новой матрице
             } else array[i][j] = current_graph->matrix[i][j];
         }
     }
-    DeinitializeMatrix(current_graph->matrix, current_graph->size);
+    freeMatrix(current_graph->matrix, current_graph->size);
     current_graph->matrix = array;
     current_graph->size = size;
 }
 
 /*
- * Функция удаления вершины (vertex) в определенном графе (current_graph)
+ * Функция удаления вершины (vertex_num) в определенном графе (current_graph)
  */
-void RemoveVertex(graph current_graph, int vertex) {
+void deleteVertex(graph current_graph, int vertex_num) {
     int size = current_graph->size - 1;
     int **a = (int **)malloc(size * sizeof(int *));
     for (int i = 0; i < size; i++){
@@ -90,33 +90,33 @@ void RemoveVertex(graph current_graph, int vertex) {
     }
     int offset = 0;
     for (int i = 0; i < size; i++){
-        if (i >= vertex) {
+        if (i >= vertex_num) {
             offset = 1;
         }
         for (int j = 0; j < size; j++){
-            if (j >= vertex) {
+            if (j >= vertex_num) {
                 a[i][j] = current_graph->matrix[i + offset][j + 1];
             } else a[i][j] = current_graph->matrix[i + offset][j];
         }
     }
-    DeinitializeMatrix(current_graph->matrix, current_graph->size);
+    freeMatrix(current_graph->matrix, current_graph->size);
     current_graph->matrix = a;
     current_graph->size = size;
 }
 
 /*
- * Функция нахождения кратчайшего пути из заданной вершины (vertex)
+ * Функция нахождения кратчайшего пути из заданной вершины (vertex_num)
  * в определенном графе (current_graph) с выводом в выходной файл (output_file)
  */
-void FindMinLength(int vertex, graph current_graph, int *distance, bool *is_visited) {
+void findMinLength(int vertex_num, graph current_graph, int *distance, bool *is_visited) {
     int index, i;
     int size = current_graph->size;
     for (i = 0; i < size; i++) {
         distance[i] = INT_MAX;
         is_visited[i] = false;
     }
-    distance[vertex] = 0;
-    for (int count = 0; count < size - 1; count ++) {
+    distance[vertex_num] = 0;
+    for (int count = 0; count < size - 1; count++) {
         int min = INT_MAX;
         for (i = 0; i < size; i++) {
             if (!is_visited[i] && distance[i] <= min) {
@@ -136,7 +136,7 @@ void FindMinLength(int vertex, graph current_graph, int *distance, bool *is_visi
     }
 }
 
-void PrintFindMinLength (int vertex, int *distance, int size, FILE *output_file) {
+void printFindMinLength (int vertex, int *distance, int size, FILE *output_file) {
     fprintf(output_file, "\n");
     for (int i = 0; i < size; i++) {
         if (i == vertex) i++;
@@ -151,7 +151,7 @@ void PrintFindMinLength (int vertex, int *distance, int size, FILE *output_file)
 /*
  * Функция вывода определенного графа (current_graph) в виде матрицы в выходной файл (output_file)
  */
-void PrintGraphFile(graph current_graph, FILE *output_file) {
+void printGraphFile(graph current_graph, FILE *output_file) {
     fprintf(output_file, "Matrix size %dx%d:\n\n", current_graph->size, current_graph->size);
      for (int i = 0; i < current_graph->size; i++){
         for (int j = 0; j < current_graph->size; j++){
@@ -164,6 +164,6 @@ void PrintGraphFile(graph current_graph, FILE *output_file) {
 /*
  * Функция получения размерности определенного графа (current_graph)
  */
-int GetSize(graph current_graph) {
+int getSize(graph current_graph) {
     return current_graph->size;
 }
