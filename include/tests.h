@@ -9,5 +9,5 @@ void deleteEdgeTest();
 void addNewVertexTest();
 void deleteVertexTest();
 void findMinLengthTest();
-int startTests();
+int main();
 #endif //MATRIXGRAPH_TEST_H

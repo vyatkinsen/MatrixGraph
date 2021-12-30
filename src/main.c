@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include "../include/graph.h"
 #include "../include/tests.h"
 
@@ -10,14 +9,10 @@
  * edges_amount (кол-во пар переходов между вершинами);
  * edges_file (текстовый файл с входными значениями);
  * output_file (текстовый файл с выходными значениями);
- * -test /optional/ (запуск тестов);
  * -way /optional/ (в выходной файл будут записаны кратчайшие пути для указанной через пробел вершины);
  */
 int main(int argc, char *argv[]) {
-    if ((argc == 2) && (*argv[1] == *"-test")) { //При указанном флаге -test запускаем тесты
-        startTests();
-        return 0;
-    } else if ((argc < 5) || (argc > 7)) {  //argc[0] занято названием программы
+    if ((argc < 5) || (argc > 8)) {  //argc[0] занято названием программы
         printf("\nIncorrect command line arguments\n");
         return -1;
     }
@@ -25,8 +20,6 @@ int main(int argc, char *argv[]) {
     int graph_size, edges_amount;
     char *pntr;
     FILE *edges_file, *output_file;
-//    sscanf(argv[1], "%d", &graph_size);  //Размер графа
-//    sscanf(argv[2], "%d", &edges_amount);  //Кол-во пар переходов между вершинами
     graph_size = (int) strtol(argv[1], &pntr, 10);
     edges_amount = (int) strtol(argv[2], &pntr, 10);
     edges_amount *= 3;
@@ -54,17 +47,10 @@ int main(int argc, char *argv[]) {
         return -1;
     }
     printGraphFile(graph, output_file); //Выводим граф в виде матрицы в файл
-    if ((argc == 7) && (*argv[5] == *"-way")) { //При указанном флаге -way ищем кратчайшие пути для указанного в *argv[6] вершины
-        int start_vertex;
-//        sscanf(argv[6], "%d", &start_vertex);  //Размер графа
-        start_vertex = (int) strtol(argv[6], &pntr, 10);
+    if ((argc == 8 ) && (*argv[5] == *"-way")) { //При указанном флаге -way ищем кратчайший путь от *argv[6] до *argv[7]
+        int start_vertex = (int) strtol(argv[6], &pntr, 10);
         if (start_vertex < graph_size) {
-            int *distance = (int *)malloc(graph_size * sizeof(int));
-            bool *is_visited = (bool *)malloc(graph_size * sizeof(bool));
-            findMinLength(start_vertex, graph, distance, is_visited);
-            printFindMinLength(start_vertex, distance, graph_size, output_file);
-            free(distance);
-            free(is_visited);
+            printFindMinLength(start_vertex, (int) strtol(argv[7], &pntr, 10), findMinLength(start_vertex, graph), graph_size, output_file);
         } else {
             printf("\nIncorrect command line arguments\n");
             return -1;

@@ -3,4 +3,10 @@ project(MatrixGraph C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(MatrixGraph include/graph.h include/tests.h src/graph.c src/main.c src/tests.c)
+add_library(myLib STATIC src/graph.c)
+
+add_executable(MatrixGraph include/graph.h  src/main.c  src/graph.c asdad.cpp)
+add_executable(MatrixTest include/tests.h src/tests.c)
+
+target_link_libraries(MatrixGraph myLib)
+target_link_libraries(MatrixTest myLib)
