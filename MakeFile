@@ -1,6 +1,6 @@
 .PHONY: all clean
 OBJS_LIB = graph.o
-OBJS_APP = main.o tests.o
+OBJS_APP = main.o
 MYLIBNAME = libgraph.a
 MYAPPNAME = app.out
 
