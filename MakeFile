@@ -14,7 +14,7 @@ clean:
 	$(RM) -f $(MYAPPNAME)
 
 # Параметры компиляции, указанные в задании
-CFLAGS= -std=c11 -pedantic -Wall -O1
+CFLAGS= -std=c11 -pedantic -Wall -Wextra -O1
 INCLUDES+= -I ./include
 vpath %.h include src
 vpath %.c src

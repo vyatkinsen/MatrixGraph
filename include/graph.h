@@ -31,7 +31,7 @@ void deleteVertex(graph current_graph, int vertex_num);
 int** findMinLength(int vertex_num, graph current_graph);
 
 //печать вывода функции printFindMinLength в выходной файл
-void printFindMinLength (int start_vertex, int end_vertex, int **arr, int size, FILE *output_file);
+void printFindMinLength (int start_vertex, int end_vertex, int **arr, FILE *output_file);
 
 //печать содержимого графа в файл
 void printGraphFile(graph current_graph, FILE *output_file);

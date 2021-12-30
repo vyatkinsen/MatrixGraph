@@ -150,7 +150,7 @@ bool ifInArray (const int *arr, int size, int n) {
 /*
  * Функция вывода результата функции findMinLength в выходной файл (output_file)
  */
-void printFindMinLength (int start_vertex, int end_vertex, int **arr, int size, FILE *output_file) {
+void printFindMinLength (int start_vertex, int end_vertex, int **arr, FILE *output_file) {
     int distance = arr[0][end_vertex];
     if (end_vertex != start_vertex) {
         if (distance != INT_MAX) {

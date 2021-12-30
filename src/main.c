@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     if ((argc == 8 ) && (*argv[5] == *"-way")) { //При указанном флаге -way ищем кратчайший путь от *argv[6] до *argv[7]
         int start_vertex = (int) strtol(argv[6], &pntr, 10);
         if (start_vertex < graph_size) {
-            printFindMinLength(start_vertex, (int) strtol(argv[7], &pntr, 10), findMinLength(start_vertex, graph), graph_size, output_file);
+            printFindMinLength(start_vertex, (int) strtol(argv[7], &pntr, 10), findMinLength(start_vertex, graph), output_file);
         } else {
             printf("\nIncorrect command line arguments\n");
             return -1;
