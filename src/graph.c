@@ -107,7 +107,7 @@ int findPath(const int *parent, int end_vertex, int start_vertex, int *path_arra
  * Функция нахождения кратчайшего пути из заданной вершины (start_vertex) в определенную вершину (end_vertex).
  * Функция возвращает количество вершин, через которое необходимо пройти.
  */
-int findMinLength(int start_vertex, int end_vertex, const int *numbers, int string_counter, int size, int **to_return_distance, int *path_array) {
+int findMinLength(int start_vertex, int end_vertex, graph graph, int string_counter, int size, int **to_return_distance, int *path_array) {
     int *distance = (int *)malloc(size * sizeof(int));
     int *parent = (int *)malloc(size * sizeof(int));
     int counter = 0;
@@ -118,14 +118,14 @@ int findMinLength(int start_vertex, int end_vertex, const int *numbers, int stri
     }
     distance[start_vertex] = 0;
 
-    for (int k = 0; k < string_counter * 3; k += 3) {
-        int source = numbers[k];
-        int destination = numbers[k + 1];
-        int weight = numbers[k + 2];
-
-        if (distance[source] != INT_MAX && distance[source] + weight < distance[destination]) {
-            distance[destination] = distance[source] + weight;
-            parent[destination] = source;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            int weight = graph->matrix[j][i];
+            if (weight == 0) continue;
+            if (distance[j] != INT_MAX && distance[j] + weight < distance[i]) {
+                distance[i] = distance[j] + weight;
+                parent[i] = j;
+            }
         }
     }
     if (end_vertex != start_vertex && distance[end_vertex] < INT_MAX)
@@ -134,6 +134,7 @@ int findMinLength(int start_vertex, int end_vertex, const int *numbers, int stri
     free(parent);
     return counter;
 }
+
 
 /*
  * Функция вывода результата функции findMinLength в выходной файл (output_file)

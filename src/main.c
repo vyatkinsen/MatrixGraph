@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../include/graph.h"
 #include "../include/tests.h"
 
@@ -32,8 +33,7 @@ int main(int argc, char *argv[]) {
         fscanf(edges_file, "%d", &numbers[counter]);
         if (m == 2) m = 0;
         else {
-            if (numbers[counter] > graph_size)
-                graph_size = numbers[counter];
+            if (numbers[counter] > graph_size) graph_size = numbers[counter];
             m++;
         }
         if (char_in_file == '\n' ) {
@@ -46,12 +46,11 @@ int main(int argc, char *argv[]) {
     if (last_char_in_file == EOF) {
         puts("\nFile is empty\n");
         return -1;
-    } else if (last_char_in_file != '\n'  ) string_counter++;
+    } else if (last_char_in_file != '\n') string_counter++;
 
     graph_size++;
     graph graph = createNewGraph(graph_size);
-    for (int k = 0; k < string_counter * 3; k += 3)
-        addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph);
+    for (int k = 0; k < string_counter * 3; k += 3) addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph);
 
     output_file = fopen(argv[2], "w");
     if (output_file == NULL) {
@@ -67,7 +66,7 @@ int main(int argc, char *argv[]) {
         if (start_vertex < graph_size) {
             int *distance;
             int *array = (int *) malloc(sizeof (int));
-            int parents_count = findMinLength(start_vertex, end_vertex, numbers, string_counter, graph_size, &distance, array);
+            int parents_count = findMinLength(start_vertex, end_vertex, graph, string_counter, graph_size, &distance, array);
             printFindMinLength(start_vertex, end_vertex, parents_count, output_file, distance, array);
             free(distance);
             free(array);
