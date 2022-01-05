@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
     graph_size++;
     graph graph = createNewGraph(graph_size);
     for (int k = 0; k < string_counter * 3; k += 3) addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph);
+    free(numbers);
 
     output_file = fopen(argv[2], "w");
     if (output_file == NULL) {
@@ -75,7 +76,6 @@ int main(int argc, char *argv[]) {
             return -1;
         }
     }
-    free(numbers);
     fclose(output_file);
     freeGraph(graph);
     return 0;
