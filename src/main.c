@@ -5,58 +5,79 @@
 
 /*
  * У программы следующие параметры командной строки:
- * graph_size (размер графа);
- * edges_amount (кол-во пар переходов между вершинами);
  * edges_file (текстовый файл с входными значениями);
  * output_file (текстовый файл с выходными значениями);
- * -way /optional/ (в выходной файл будут записаны кратчайшие пути для указанной через пробел вершины);
+ * -way /optional/ (в выходной файл будут записан кратчайший путь из одной до другой вершины);
  */
 int main(int argc, char *argv[]) {
-    if ((argc < 5) || (argc > 8)) {  //argc[0] занято названием программы
-        printf("\nIncorrect command line arguments\n");
+    if ((argc < 2) || (argc > 6)) {  //argc[0] занято названием программы
+        puts("\nIncorrect command line arguments\n");
         return -1;
     }
 
-    int graph_size, edges_amount;
-    char *pntr;
+    int graph_size = INT_MIN, string_counter = 0, counter = 0, m = 0;
+    int char_in_file, last_char_in_file = EOF;
+    int *numbers = (int *)malloc(3 * sizeof(int));
     FILE *edges_file, *output_file;
-    graph_size = (int) strtol(argv[1], &pntr, 10);
-    edges_amount = (int) strtol(argv[2], &pntr, 10);
-    edges_amount *= 3;
-    int *numbers = (int *)malloc(edges_amount * sizeof(int));
 
-    edges_file = fopen(argv[3], "rt"); //Открываем текстовый файл для чтения
+    edges_file = fopen(argv[1], "rt");
     if (edges_file == NULL) {
-        printf("\nInput file does not exist\n");
+        puts("\nInput file does not exist\n");
         return -1;
     }
 
-    for (int i = 0; !feof(edges_file); i++) {   //Макросом feof() контролируется указатель положения в файле, когда он доходит до конца файла, происходит выход из цикла
-         fscanf(edges_file, "%d", &numbers[i]);  //В массив numbers записываются значения из файла edges
+    while (!feof(edges_file)) {
+        char_in_file = fgetc(edges_file);
+        last_char_in_file = char_in_file;
+        fscanf(edges_file, "%d", &numbers[counter]);
+        if (m == 2) m = 0;
+        else {
+            if (numbers[counter] > graph_size)
+                graph_size = numbers[counter];
+            m++;
+        }
+        if (char_in_file == '\n' ) {
+            string_counter++;
+            numbers = (int *) realloc(numbers, (counter + 1) * 3 * sizeof (int));
+        }
+        counter++;
     }
-    graph graph = createNewGraph(graph_size);         //Создаем граф
-    for (int k = 0; k < edges_amount; k += 3) {
-        addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph); //Добавляем рёбра
-    }
-    free(numbers); //Освобождаем память
     fclose(edges_file);
+    if (last_char_in_file == EOF) {
+        puts("\nFile is empty\n");
+        return -1;
+    } else if (last_char_in_file != '\n'  ) string_counter++;
 
-    output_file = fopen(argv[4], "w"); //Создаем текстовый файл для записи
+    graph_size++;
+    graph graph = createNewGraph(graph_size);
+    for (int k = 0; k < string_counter * 3; k += 3)
+        addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph);
+
+    output_file = fopen(argv[2], "w");
     if (output_file == NULL) {
         printf("\nInput file does not exist\n");
         return -1;
     }
-    printGraphFile(graph, output_file); //Выводим граф в виде матрицы в файл
-    if ((argc == 8 ) && (*argv[5] == *"-way")) { //При указанном флаге -way ищем кратчайший путь от *argv[6] до *argv[7]
-        int start_vertex = (int) strtol(argv[6], &pntr, 10);
+    printGraphFile(graph, output_file);
+
+    if ((argc == 6 ) && (*argv[3] == *"-way")) { //При указанном флаге -way ищем кратчайший путь от *argv[4] до *argv[5]
+        char *pntr;
+        int start_vertex = (int) strtol(argv[4], &pntr, 10);
+        int end_vertex = (int) strtol(argv[5], &pntr, 10);
         if (start_vertex < graph_size) {
-            printFindMinLength(start_vertex, (int) strtol(argv[7], &pntr, 10), findMinLength(start_vertex, graph), output_file);
+            int *distance;
+            int *array = (int *) malloc(sizeof (int));
+            int parents_count = findMinLength(start_vertex, end_vertex, numbers, string_counter, graph_size, &distance, array);
+            printFindMinLength(start_vertex, end_vertex, parents_count, output_file, distance, array);
+            free(distance);
+            free(array);
         } else {
             printf("\nIncorrect command line arguments\n");
             return -1;
         }
     }
+    free(numbers);
     fclose(output_file);
-    freeGraph(graph); //Освобождаем память
+    freeGraph(graph);
     return 0;
 }

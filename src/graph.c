@@ -5,16 +5,13 @@
  */
 graph createNewGraph(int size) {
     graph new_graph;
-    new_graph = malloc(size * sizeof(int *));
+    new_graph = malloc(sizeof(struct graphStructure));
     new_graph->size = size;
     new_graph->matrix = (int **)malloc(size * sizeof(int *));
-    for(int i = 0; i < size; i++) {
-        new_graph->matrix[i] = (int *)malloc(size * sizeof(int));
-    }
+    for(int i = 0; i < size; i++) new_graph->matrix[i] = (int *)malloc(size * sizeof(int));
     for (int i = 0; i < size; i++) { //Заполняем матрицу нулями
-        for (int j = 0; j < size; j++) {
+        for (int j = 0; j < size; j++)
             new_graph->matrix[i][j] = 0;
-        }
     }
     return new_graph;
 }
@@ -23,9 +20,7 @@ graph createNewGraph(int size) {
  * Функция деинициализации матрицы графа (освобождение памяти)
  */
 void freeMatrix(int **matrix, int size) {
-    for (int i = 0; i < size; i++) {
-        free(matrix[i]);
-    }
+    for (int i = 0; i < size; i++) free(matrix[i]);
     free(matrix);
 }
 
@@ -55,11 +50,15 @@ int addNewEdge(int vertex1, int vertex2, int weight, graph current_graph) {
 /*
  * Функция удаления ребра между 2 вершинами (vertex1, vertex2) в определенном графе (current_graph)
  */
-void deleteEdge(int vertex1, int vertex2, graph current_graph) {
+int deleteEdge(int vertex1, int vertex2, graph current_graph) {
     if ((vertex2 < current_graph->size) && (vertex1 < current_graph->size)) {
         current_graph->matrix[vertex1][vertex2] = 0;
         current_graph->matrix[vertex2][vertex1] = 0;
-    } else printf("\nIncorrect vertexes\n");
+    } else {
+        printf("\nIncorrect vertexes\n");
+        return -1;
+    }
+    return 0;
 }
 
 /*
@@ -72,14 +71,10 @@ int addNewVertex(graph current_graph) {
 
     for (int i = 0; i < size; i++) {
         current_graph->matrix[i] = (int *) realloc(current_graph->matrix[i], (size + 1) * sizeof(int));
-        for (int j = size - 1; j < size; j++){
-            current_graph->matrix[i][j] = 0;    //Заполняем нулями последние пустые ячейки в новой матрице
-        }
+        for (int j = size - 1; j < size; j++) current_graph->matrix[i][j] = 0;
     }
-    for (int i = size - 1; i < size; i++){
-        for (int j = 0; j < size; j++){
-            current_graph->matrix[i][j] = 0;    //Заполняем нулями последние пустые ячейки в новой матрице
-        }
+    for (int i = size - 1; i < size; i++) {
+        for (int j = 0; j < size; j++) current_graph->matrix[i][j] = 0;
     }
     current_graph->size = size;
     return new_Number_Of_Vertex;
@@ -97,78 +92,65 @@ void deleteVertex(graph current_graph, int vertex_num) {
 }
 
 /*
- * Функция нахождения кратчайшего пути из заданной вершины (vertex_num) в определенном графе (current_graph)
+ * Рекурсивная функция восстановления пути
  */
-int** findMinLength(int vertex_num, graph current_graph) {
-    int index, i, x = 1;
-    int size = current_graph->size;
-    int *distance = (int *)malloc(size * sizeof(int));
-    int *arr = (int *)malloc(sizeof(int));
-    bool *is_visited = (bool *)malloc(size * sizeof(bool));
-    int **toReturn = (int **)malloc(size * sizeof(int *));
-    for (i = 0; i < size; i++) {
-        distance[i] = INT_MAX;
-        is_visited[i] = false;
-    }
-    distance[vertex_num] = 0;
-    for (int count = 0; count < size + 1; count++) {
-        int min = INT_MAX;
-        for (i = 0; i < size; i++) {
-            if (!is_visited[i] && distance[i] <= min) {
-                min = distance[i];
-                index = i;
-            }
-        }
-        int j = index;
-        is_visited[j] = true;
-        for (i = 0; i < size; i++) {
-            if (!is_visited[i] && current_graph->matrix[j][i] && distance[j] != INT_MAX && distance[j] + current_graph->matrix[j][i] < distance[i]) {
-                distance[i] = distance[j] + current_graph->matrix[j][i];
-                if ((vertex_num == 0 && x == 1) || !ifInArray(arr, size, j)) {
-                    arr[x] = j;
-                    x++;
-                    arr = (int*) realloc(arr, x * sizeof(*arr));
-                }
-            }
-         }
-    }
-    x--;
-    arr[0] = x;
-    free(is_visited);
-    toReturn[0] = distance;
-    toReturn[1] = arr;
-    return toReturn;
+int findPath(const int *parent, int end_vertex, int start_vertex, int *path_array, int counter) {
+    if (end_vertex < 0) return 0;
+    counter = findPath(parent, parent[end_vertex], start_vertex, path_array, counter);
+    path_array = (int *) realloc(path_array, (counter + 1) * sizeof (int));
+    path_array[counter] = end_vertex;
+    counter++;
+    return counter;
 }
 
-bool ifInArray (const int *arr, int size, int n) {
+/*
+ * Функция нахождения кратчайшего пути из заданной вершины (start_vertex) в определенную вершину (end_vertex).
+ * Функция возвращает количество вершин, через которое необходимо пройти.
+ */
+int findMinLength(int start_vertex, int end_vertex, const int *numbers, int string_counter, int size, int **to_return_distance, int *path_array) {
+    int *distance = (int *)malloc(size * sizeof(int));
+    int *parent = (int *)malloc(size * sizeof(int));
+    int counter = 0;
+
     for (int i = 0; i < size; i++) {
-        if (arr[i] == n) return true;
+        distance[i] = INT_MAX;
+        parent[i] = -1;
     }
-    return false;
+    distance[start_vertex] = 0;
+
+    for (int k = 0; k < string_counter * 3; k += 3) {
+        int source = numbers[k];
+        int destination = numbers[k + 1];
+        int weight = numbers[k + 2];
+
+        if (distance[source] != INT_MAX && distance[source] + weight < distance[destination]) {
+            distance[destination] = distance[source] + weight;
+            parent[destination] = source;
+        }
+    }
+    if (end_vertex != start_vertex && distance[end_vertex] < INT_MAX)
+        counter = findPath(parent, end_vertex, start_vertex, path_array, counter);
+    *to_return_distance = distance;
+    free(parent);
+    return counter;
 }
 
 /*
  * Функция вывода результата функции findMinLength в выходной файл (output_file)
  */
-void printFindMinLength (int start_vertex, int end_vertex, int **arr, FILE *output_file) {
-    int distance = arr[0][end_vertex];
+void printFindMinLength (int start_vertex, int end_vertex, int parents_count, FILE *output_file, const int *distance_array, int *path_array) {
     if (end_vertex != start_vertex) {
-        if (distance != INT_MAX) {
-            fprintf(output_file, "\nСтоимость пути из %d в %d - %d;\n", start_vertex, end_vertex, distance);
-            if (distance != 0) {
+        if (distance_array[end_vertex] != INT_MAX) {
+            fprintf(output_file, "\nСтоимость пути из %d в %d - %d;\n", start_vertex, end_vertex, distance_array[end_vertex]);
+            if (distance_array[end_vertex] != 0) {
                 fprintf(output_file, "Перемещения из %d в %d: ", start_vertex, end_vertex);
-                for (int x = 0; x < arr[1][0]; x++) {
-                    fprintf(output_file, "%d", arr[1][x + 1]);
-                    if (x != arr[1][0] - 1) fprintf(output_file, " -> ");
+                for (int x = 0; x < parents_count; x++) {
+                    fprintf(output_file, "%d", path_array[x]);
+                    if (x != parents_count - 1) fprintf(output_file, " -> ");
                 }
             }
-        } else {
-            fprintf(output_file, "Путь из %d в %d невозможен;\n", start_vertex, end_vertex);
-        }
-    } else {
-        fprintf(output_file, "Стоимость пути из %d в %d - 0;\n", start_vertex, end_vertex);
-    }
-    free(arr);
+        } else fprintf(output_file, "Путь из %d в %d невозможен;\n", start_vertex, end_vertex);
+    } else fprintf(output_file, "Стоимость пути из %d в %d - 0;\n", start_vertex, end_vertex);
 }
 
 /*
@@ -176,10 +158,9 @@ void printFindMinLength (int start_vertex, int end_vertex, int **arr, FILE *outp
  */
 void printGraphFile(graph current_graph, FILE *output_file) {
     fprintf(output_file, "Matrix size %dx%d:\n\n", current_graph->size, current_graph->size);
-     for (int i = 0; i < current_graph->size; i++){
-        for (int j = 0; j < current_graph->size; j++){
+    for (int i = 0; i < current_graph->size; i++) {
+        for (int j = 0; j < current_graph->size; j++)
             fprintf(output_file, " %d ", current_graph->matrix[i][j]);
-        }
         fprintf(output_file, "\n");
     }
 }

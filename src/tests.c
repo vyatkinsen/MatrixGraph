@@ -85,19 +85,20 @@ void deleteVertexTest() {
 }
 
 void findMinLengthTest() {
-    int size = 4;
-    graph newGraph = createNewGraph(size);
-    int *distance = (int *)malloc(size * sizeof(int));
-    bool *is_visited = (bool *)malloc(size * sizeof(bool));
-    addNewEdge(1, 2, 23, newGraph);
-    addNewEdge(0, 1, 33, newGraph);
-    addNewEdge(0, 3, 44, newGraph);
-//    findMinLength(1, newGraph, distance, is_visited);
-    assert(distance[0] == 33);
-    assert(distance[2] == 23);
-    assert(distance[3] == 77);
+    int size = 3;
+    int a[] = {1, 0, 22, 0, 2, 33, 1, 2, 60};
+    int *distance;
+    int *array = (int *) malloc(sizeof (int));
+    int count = findMinLength(1, 2, a, 3, 3, &distance, array);
+    assert(distance[0] == 22);
+    assert(distance[1] == 0);
+    assert(distance[2] == 55);
+    assert(count == 3);
+    assert(array[0] == 1);
+    assert(array[1] == 0);
+    assert(array[2] == 2);
+    free(array);
     free(distance);
-    free(is_visited);
 }
 
 int main() {
@@ -106,6 +107,6 @@ int main() {
     deleteEdgeTest();
     addNewVertexTest();
     deleteVertexTest();
-//    findMinLengthTest();
+    findMinLengthTest();
     return 0;
 }

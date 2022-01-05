@@ -19,7 +19,7 @@ graph createNewGraph(int size); //создание графа размернос
 int addNewEdge(int vertex1, int vertex2, int weight, graph current_graph);
 
 //удаление ребра между 2 вершинами
-void deleteEdge(int vertex1, int vertex2, graph current_graph);
+int deleteEdge(int vertex1, int vertex2, graph current_graph);
 
 //добавление вершины в граф
 int addNewVertex(graph current_graph);
@@ -27,11 +27,14 @@ int addNewVertex(graph current_graph);
 //удаление вершины из графа
 void deleteVertex(graph current_graph, int vertex_num);
 
-//поиск кратчайшего пути из заданной вершины
-int** findMinLength(int vertex_num, graph current_graph);
+//Рекурсивная функция восстановления пути
+int findPath(const int *parent, int end_vertex, int start_vertex, int *path_array, int counter);
+
+//поиск кратчайшего пути из заданной вершины в определенную
+int findMinLength(int start_vertex, int end_vertex, const int *numbers, int string_counter, int size, int **to_return_distance, int *path_array);
 
 //печать вывода функции printFindMinLength в выходной файл
-void printFindMinLength (int start_vertex, int end_vertex, int **arr, FILE *output_file);
+void printFindMinLength (int start_vertex, int end_vertex, int parents_count, FILE *output_file, const int *distance_array, int *path_array);
 
 //печать содержимого графа в файл
 void printGraphFile(graph current_graph, FILE *output_file);
@@ -41,7 +44,4 @@ void freeGraph(graph current_graph);
 
 //получение размерности графа
 int getSize(graph current_graph);
-
-bool ifInArray (const int *arr, int size, int n);
 #endif //MATRIXGRAPH_GRAPH_H
-
