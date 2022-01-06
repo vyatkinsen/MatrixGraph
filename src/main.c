@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
                         numbers[index - 1] = direction;
                         numbers[index] = full_num;
                         direction++;
-                        if (direction == 5) {
+                        if (direction == graph_size) {
                             direction = 0;
                             src++;
                         }
@@ -57,7 +57,6 @@ int main(int argc, char *argv[]) {
             }
             previous_char_in_file = char_in_file;
         }
-
         graph = createNewGraph(graph_size);
         for (k = 0; k < index; k += 3) addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph);
     } else {
@@ -87,8 +86,8 @@ int main(int argc, char *argv[]) {
                 return -1;
             } else if (last_char_in_file != '\n') string_counter++;
 
-            graph_size++;
         }
+        graph_size++;
         graph = createNewGraph(graph_size);
         for (k = 0; k < string_counter * 3; k += 3) addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph);
     }
