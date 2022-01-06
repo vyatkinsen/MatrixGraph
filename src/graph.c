@@ -37,9 +37,10 @@ void freeGraph(graph current_graph) {
  * с определенным положительным весом (weight), в определенном графе (current_graph)
  */
 int addNewEdge(int vertex1, int vertex2, int weight, graph current_graph) {
-    if ((vertex2 < current_graph->size) && (vertex1 < current_graph->size) && (weight > 0)) {
+    if ((vertex2 < current_graph->size) && (vertex1 < current_graph->size) && (weight >= 0)) {
         current_graph->matrix[vertex1][vertex2] = weight;
         current_graph->matrix[vertex2][vertex1] = weight;
+//        printf("v1 = %d, v2 = %d;\n", vertex1, vertex2);
     } else {
         printf("\nIncorrect vertexes or weight\n");
         return -1;
@@ -158,7 +159,7 @@ void printFindMinLength (int start_vertex, int end_vertex, int parents_count, FI
  * Функция вывода определенного графа (current_graph) в виде матрицы в выходной файл (output_file)
  */
 void printGraphFile(graph current_graph, FILE *output_file) {
-    fprintf(output_file, "Matrix size %dx%d:\n\n", current_graph->size, current_graph->size);
+    fprintf(output_file, "Matrix size %d:\n\n", current_graph->size);
     for (int i = 0; i < current_graph->size; i++) {
         for (int j = 0; j < current_graph->size; j++)
             fprintf(output_file, " %d ", current_graph->matrix[i][j]);
