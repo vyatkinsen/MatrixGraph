@@ -89,7 +89,7 @@ void findMinLengthTest() {
     int a[] = {1, 0, 22, 0, 2, 33, 1, 2, 60};
     int *distance;
     int *array = (int *) malloc(sizeof (int));
-    int count = findMinLength(1, 2, a, 3, 3, &distance, array);
+    int count = findMinLength(1, 2, a, 3, &distance, array);
     assert(distance[0] == 22);
     assert(distance[1] == 0);
     assert(distance[2] == 55);

@@ -40,12 +40,71 @@ int addNewEdge(int vertex1, int vertex2, int weight, graph current_graph) {
     if ((vertex2 < current_graph->size) && (vertex1 < current_graph->size) && (weight >= 0)) {
         current_graph->matrix[vertex1][vertex2] = weight;
         current_graph->matrix[vertex2][vertex1] = weight;
-//        printf("v1 = %d, v2 = %d;\n", vertex1, vertex2);
     } else {
         printf("\nIncorrect vertexes or weight\n");
         return -1;
     }
     return 0;
+}
+
+/*
+ * Функция создания графа из output файла
+ */
+int createNewGraphFromOutputFile(FILE *edges_file, int **numbers) {
+    int graph_size = INT_MIN, full_num = 0, src = 0, direction = 0, index = -1;
+    int char_in_file, previous_char_in_file;
+    while (!feof(edges_file)) {
+        char_in_file = fgetc(edges_file);
+        if (isdigit(char_in_file)) full_num = full_num * 10 + (char_in_file - 48);
+        else {
+            if (isdigit(previous_char_in_file)) {
+                if (index == -1) {
+                    graph_size = full_num;
+                    *numbers = (int *) realloc(*numbers, 3 * graph_size * graph_size * sizeof (int*));
+                } else {
+                    (*numbers)[index - 2] = src;
+                    (*numbers)[index - 1] = direction;
+                    (*numbers)[index] = full_num;
+                    direction++;
+                    if (direction == graph_size) {
+                        direction = 0;
+                        src++;
+                    }
+                }
+                if (index == 3 * graph_size * graph_size - 1) break;
+                index += 3;
+            }
+            full_num = 0;
+        }
+        previous_char_in_file = char_in_file;
+    }
+    return graph_size;
+}
+
+/*
+ * Функция создания графа из input файла
+ */
+int createNewGraphFromEdgesFile(FILE *edges_file, int **numbers) {
+    int char_in_file, last_char_in_file = EOF, graph_size = INT_MIN, counter = 0, m = 0;
+    int *arr = (int*) malloc(3 * sizeof(int*));
+    while (!feof(edges_file)) {
+        char_in_file = fgetc(edges_file);
+        last_char_in_file = char_in_file;
+        fscanf(edges_file, "%d", &arr[counter]);
+        if (m == 2) m = 0;
+        else {
+            if (arr[counter] > graph_size) graph_size = arr[counter];
+            m++;
+        }
+        if (char_in_file == '\n' ) arr = (int *) realloc(arr, (counter + 1) * 3 * sizeof (int*));
+        counter++;
+        if (last_char_in_file == EOF) {
+            puts("\nFile is empty\n");
+            return -1;
+        }
+    }
+    *numbers = arr;
+    return graph_size;
 }
 
 /*
@@ -108,7 +167,7 @@ int findPath(const int *parent, int end_vertex, int start_vertex, int *path_arra
  * Функция нахождения кратчайшего пути из заданной вершины (start_vertex) в определенную вершину (end_vertex).
  * Функция возвращает количество вершин, через которое необходимо пройти.
  */
-int findMinLength(int start_vertex, int end_vertex, graph graph, int string_counter, int size, int **to_return_distance, int *path_array) {
+int findMinLength(int start_vertex, int end_vertex, graph graph, int size, int **to_return_distance, int *path_array) {
     int *distance = (int *)malloc(size * sizeof(int));
     int *parent = (int *)malloc(size * sizeof(int));
     int counter = 0;
@@ -135,7 +194,6 @@ int findMinLength(int start_vertex, int end_vertex, graph graph, int string_coun
     free(parent);
     return counter;
 }
-
 
 /*
  * Функция вывода результата функции findMinLength в выходной файл (output_file)
