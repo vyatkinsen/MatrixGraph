@@ -86,10 +86,12 @@ void deleteVertexTest() {
 
 void findMinLengthTest() {
     int size = 3;
+    graph graph = createNewGraph(size);
     int a[] = {1, 0, 22, 0, 2, 33, 1, 2, 60};
+    for (int x = 0; x < 3 * size; x += 3) addNewEdge(a[x], a[x + 1], a[x + 2], graph);
     int *distance;
     int *array = (int *) malloc(sizeof (int));
-    int count = findMinLength(1, 2, a, 3, &distance, array);
+    int count = findMinLength(1, 2, graph, size, &distance, array);
     assert(distance[0] == 22);
     assert(distance[1] == 0);
     assert(distance[2] == 55);

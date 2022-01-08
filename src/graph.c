@@ -50,7 +50,12 @@ int addNewEdge(int vertex1, int vertex2, int weight, graph current_graph) {
 /*
  * Функция создания графа из output файла
  */
-int createNewGraphFromOutputFile(FILE *edges_file, int **numbers) {
+int extractGraphFromOutputFile(char *input_file_name, int **numbers) {
+    FILE *edges_file = fopen(input_file_name, "rt");
+    if (edges_file == NULL) {
+        puts("\nInput file does not exist\n");
+        return -1;
+    }
     int graph_size = INT_MIN, full_num = 0, src = 0, direction = 0, index = -1;
     int char_in_file, previous_char_in_file;
     while (!feof(edges_file)) {
@@ -78,13 +83,20 @@ int createNewGraphFromOutputFile(FILE *edges_file, int **numbers) {
         }
         previous_char_in_file = char_in_file;
     }
+    fclose(edges_file);
     return graph_size;
 }
 
 /*
  * Функция создания графа из input файла
  */
-int createNewGraphFromEdgesFile(FILE *edges_file, int **numbers) {
+int extractGraphFromEdgesFile(char *input_file_name, int **numbers) {
+    FILE *edges_file = fopen(input_file_name, "rt");
+    if (edges_file == NULL) {
+        puts("\nInput file does not exist\n");
+        return -1;
+    }
+
     int char_in_file, last_char_in_file = EOF, graph_size = INT_MIN, counter = 0, m = 0;
     int *arr = (int*) malloc(3 * sizeof(int*));
     while (!feof(edges_file)) {
@@ -103,53 +115,11 @@ int createNewGraphFromEdgesFile(FILE *edges_file, int **numbers) {
             return -1;
         }
     }
+    fclose(edges_file);
     *numbers = arr;
-    return graph_size;
+    return ++graph_size;
 }
 
-/*
- * Функция удаления ребра между 2 вершинами (vertex1, vertex2) в определенном графе (current_graph)
- */
-int deleteEdge(int vertex1, int vertex2, graph current_graph) {
-    if ((vertex2 < current_graph->size) && (vertex1 < current_graph->size)) {
-        current_graph->matrix[vertex1][vertex2] = 0;
-        current_graph->matrix[vertex2][vertex1] = 0;
-    } else {
-        printf("\nIncorrect vertexes\n");
-        return -1;
-    }
-    return 0;
-}
-
-/*
- * Функция добавления вершины в определенном графе (current_graph)
- */
-int addNewVertex(graph current_graph) {
-    int size = current_graph->size + 1;
-    int new_Number_Of_Vertex = current_graph->size;
-    current_graph->matrix = (int**) realloc(current_graph->matrix, size * sizeof(*current_graph->matrix));
-
-    for (int i = 0; i < size; i++) {
-        current_graph->matrix[i] = (int *) realloc(current_graph->matrix[i], (size + 1) * sizeof(int));
-        for (int j = size - 1; j < size; j++) current_graph->matrix[i][j] = 0;
-    }
-    for (int i = size - 1; i < size; i++) {
-        for (int j = 0; j < size; j++) current_graph->matrix[i][j] = 0;
-    }
-    current_graph->size = size;
-    return new_Number_Of_Vertex;
-}
-
-/*
- * Функция удаления вершины (vertex_num) в определенном графе (current_graph)
- */
-void deleteVertex(graph current_graph, int vertex_num) {
-    int size = current_graph->size;
-    for (int i = 0; i < size; i++) {
-        current_graph->matrix[vertex_num][i] = 0;
-        current_graph->matrix[i][vertex_num] = 0;
-    }
-}
 
 /*
  * Рекурсивная функция восстановления пути
@@ -198,7 +168,12 @@ int findMinLength(int start_vertex, int end_vertex, graph graph, int size, int *
 /*
  * Функция вывода результата функции findMinLength в выходной файл (output_file)
  */
-void printFindMinLength (int start_vertex, int end_vertex, int parents_count, FILE *output_file, const int *distance_array, int *path_array) {
+void printFindMinLength (int start_vertex, int end_vertex, int parents_count, char *output_file_name, const int *distance_array, int *path_array) {
+    FILE *output_file = fopen(output_file_name, "at");
+    if (output_file == NULL) {
+        printf("\nOutput file name incorrect\n");
+        return;
+    }
     if (end_vertex != start_vertex) {
         if (distance_array[end_vertex] != INT_MAX) {
             fprintf(output_file, "\nСтоимость пути из %d в %d - %d;\n", start_vertex, end_vertex, distance_array[end_vertex]);
@@ -211,17 +186,69 @@ void printFindMinLength (int start_vertex, int end_vertex, int parents_count, FI
             }
         } else fprintf(output_file, "Путь из %d в %d невозможен;\n", start_vertex, end_vertex);
     } else fprintf(output_file, "Стоимость пути из %d в %d - 0;\n", start_vertex, end_vertex);
+    fclose(output_file);
 }
 
 /*
  * Функция вывода определенного графа (current_graph) в виде матрицы в выходной файл (output_file)
  */
-void printGraphFile(graph current_graph, FILE *output_file) {
+void printGraphInFile(graph current_graph, char *output_file_name) {
+    puts(output_file_name);
+    FILE *output_file = fopen(output_file_name, "w");
+    if (output_file == NULL) {
+        printf("\nOutput file name incorrect\n");
+        return;
+    }
     fprintf(output_file, "Matrix size %d:\n\n", current_graph->size);
     for (int i = 0; i < current_graph->size; i++) {
         for (int j = 0; j < current_graph->size; j++)
             fprintf(output_file, " %d ", current_graph->matrix[i][j]);
         fprintf(output_file, "\n");
+    }
+    fclose(output_file);
+}
+
+/*
+ * Функция удаления ребра между 2 вершинами (vertex1, vertex2) в определенном графе (current_graph)
+ */
+int deleteEdge(int vertex1, int vertex2, graph current_graph) {
+    if ((vertex2 < current_graph->size) && (vertex1 < current_graph->size)) {
+        current_graph->matrix[vertex1][vertex2] = 0;
+        current_graph->matrix[vertex2][vertex1] = 0;
+    } else {
+        printf("\nIncorrect vertexes\n");
+        return -1;
+    }
+    return 0;
+}
+
+/*
+ * Функция добавления вершины в определенном графе (current_graph)
+ */
+int addNewVertex(graph current_graph) {
+    int size = current_graph->size + 1;
+    int new_Number_Of_Vertex = current_graph->size;
+    current_graph->matrix = (int**) realloc(current_graph->matrix, size * sizeof(*current_graph->matrix));
+
+    for (int i = 0; i < size; i++) {
+        current_graph->matrix[i] = (int *) realloc(current_graph->matrix[i], (size + 1) * sizeof(int));
+        for (int j = size - 1; j < size; j++) current_graph->matrix[i][j] = 0;
+    }
+    for (int i = size - 1; i < size; i++) {
+        for (int j = 0; j < size; j++) current_graph->matrix[i][j] = 0;
+    }
+    current_graph->size = size;
+    return new_Number_Of_Vertex;
+}
+
+/*
+ * Функция удаления вершины (vertex_num) в определенном графе (current_graph)
+ */
+void deleteVertex(graph current_graph, int vertex_num) {
+    int size = current_graph->size;
+    for (int i = 0; i < size; i++) {
+        current_graph->matrix[vertex_num][i] = 0;
+        current_graph->matrix[i][vertex_num] = 0;
     }
 }
 

@@ -20,10 +20,10 @@ graph createNewGraph(int size); //создание графа размернос
 int addNewEdge(int vertex1, int vertex2, int weight, graph current_graph);
 
 //Функция создания графа из output файла
-int createNewGraphFromOutputFile(FILE *edges_file, int **numbers);
+int extractGraphFromOutputFile(char *input_file_name, int **numbers);
 
 //Функция создания графа из input файла
-int createNewGraphFromEdgesFile(FILE *edges_file, int **numbers);
+int extractGraphFromEdgesFile(char *input_file_name, int **numbers);
 
 //удаление ребра между 2 вершинами
 int deleteEdge(int vertex1, int vertex2, graph current_graph);
@@ -41,10 +41,10 @@ int findPath(const int *parent, int end_vertex, int start_vertex, int *path_arra
 int findMinLength(int start_vertex, int end_vertex, graph graph, int size, int **to_return_distance, int *path_array);
 
 //печать вывода функции printFindMinLength в выходной файл
-void printFindMinLength (int start_vertex, int end_vertex, int parents_count, FILE *output_file, const int *distance_array, int *path_array);
+void printFindMinLength (int start_vertex, int end_vertex, int parents_count, char *output_file_name, const int *distance_array, int *path_array);
 
 //печать содержимого графа в файл
-void printGraphFile(graph current_graph, FILE *output_file);
+void printGraphInFile(graph current_graph, char *output_file_name);
 
 //освобождение памяти
 void freeGraph(graph current_graph);
