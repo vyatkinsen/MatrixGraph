@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     for (int k = 0; k < 3 * graph_size * graph_size - 1; k += 3) addNewEdge((*numbers)[k], (*numbers)[k + 1], (*numbers)[k + 2], graph);
     free(numbers);
     printGraphInFile(graph, argv[index_for_way]);
-    if ((argc >= 6 ) && (*argv[index_for_way + 1] == *"-way")) { //При указанном флаге -way ищем кратчайший путь от *argv[4] до *argv[5]
+    if ((argc >= 6 ) && (*argv[index_for_way + 1] == *"-way")) { //При указанном флаге -way ищем кратчайший путь между указанными вершинами
         char *ptr;
         int start_vertex = (int) strtol(argv[index_for_way + 2], &ptr, 10);
         int end_vertex = (int) strtol(argv[index_for_way + 3], &ptr, 10);
