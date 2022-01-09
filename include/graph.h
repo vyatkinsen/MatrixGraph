@@ -14,7 +14,8 @@ struct graphStructure {
 };
 typedef struct graphStructure *graph;
 
-graph createNewGraph(int size); //создание графа размерности size
+//создание графа размерности size
+graph createNewGraph(int size);
 
 //добавление ребра между 2 вершинами с определенным весом
 int addNewEdge(int vertex1, int vertex2, int weight, graph current_graph);
@@ -41,7 +42,7 @@ int findPath(const int *parent, int end_vertex, int start_vertex, int *path_arra
 int findMinLength(int start_vertex, int end_vertex, graph graph, int size, int **to_return_distance, int *path_array);
 
 //печать вывода функции printFindMinLength в выходной файл
-void printFindMinLength (int start_vertex, int end_vertex, int parents_count, char *output_file_name, const int *distance_array, int *path_array);
+void printFindMinLength(int start_vertex, int end_vertex, int parents_count, char *output_file_name, const int *distance_array, int *path_array);
 
 //печать содержимого графа в файл
 void printGraphInFile(graph current_graph, char *output_file_name);

@@ -193,7 +193,6 @@ void printFindMinLength (int start_vertex, int end_vertex, int parents_count, ch
  * Функция вывода определенного графа (current_graph) в виде матрицы в выходной файл (output_file)
  */
 void printGraphInFile(graph current_graph, char *output_file_name) {
-    puts(output_file_name);
     FILE *output_file = fopen(output_file_name, "w");
     if (output_file == NULL) {
         printf("\nOutput file name incorrect\n");

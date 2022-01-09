@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     int index_for_way, graph_size = INT_MIN;
     int** numbers = (int **)malloc(3 * sizeof(int**));
     graph graph;
-    if (*argv[1] == *"-fo") {  //Для случая, когда нужно создать граф из выходного файла
+    if (*argv[1] == *"-fo") {  //Для случая, когда нужно создать граф из выходного текстового файла
         index_for_way = 3;
         graph_size = extractGraphFromOutputFile(argv[2], numbers);
     }
