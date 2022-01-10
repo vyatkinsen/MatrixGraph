@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/graph.h"
-#include "../include/tests.h"
 
 /*
  * У программы следующие параметры командной строки:
