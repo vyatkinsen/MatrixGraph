@@ -235,7 +235,7 @@ int deleteEdge(int vertex1, int vertex2, graph current_graph) {
 int addNewVertex(graph current_graph) {
     int size = current_graph->size + 1;
     int new_Number_Of_Vertex = current_graph->size;
-    current_graph->matrix = (int**) realloc(current_graph->matrix, size * sizeof(current_graph->matrix));
+    current_graph->matrix = (int**) realloc(current_graph->matrix, size * sizeof(int*));
 
     for (int i = 0; i < size; i++) {
         current_graph->matrix[i] = (int *) realloc(current_graph->matrix[i], size * sizeof(int));
