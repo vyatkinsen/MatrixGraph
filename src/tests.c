@@ -91,7 +91,7 @@ void findMinLengthTest() {
     for (int x = 0; x < 3 * size; x += 3) addNewEdge(a[x], a[x + 1], a[x + 2], graph);
     int *distance;
     int *array = (int *) malloc(sizeof (int));
-    int count = findMinLength(1, 2, graph, size, &distance, array);
+    int count = findMinLength(1, 2, graph, &distance, array);
     assert(distance[0] == 22);
     assert(distance[1] == 0);
     assert(distance[2] == 55);

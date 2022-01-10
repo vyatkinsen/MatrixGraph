@@ -50,14 +50,16 @@ int addNewEdge(int vertex1, int vertex2, int weight, graph current_graph) {
 /*
  * Функция создания графа из output файла
  */
-int extractGraphFromOutputFile(char *input_file_name, int **numbers) {
+graph extractGraphFromOutputFile(char *input_file_name) {
     FILE *edges_file = fopen(input_file_name, "rt");
     if (edges_file == NULL) {
         puts("\nInput file does not exist\n");
-        return -1;
+        exit(-1);
     }
     int graph_size = INT_MIN, full_num = 0, src = 0, direction = 0, index = -1;
     int char_in_file, previous_char_in_file;
+    int *numbers = (int *)malloc(sizeof(int*));
+
     while (!feof(edges_file)) {
         char_in_file = fgetc(edges_file);
         if (isdigit(char_in_file)) full_num = full_num * 10 + (char_in_file - 48);
@@ -65,11 +67,11 @@ int extractGraphFromOutputFile(char *input_file_name, int **numbers) {
             if (isdigit(previous_char_in_file)) {
                 if (index == -1) {
                     graph_size = full_num;
-                    *numbers = (int *) realloc(*numbers, 3 * graph_size * graph_size * sizeof (int*));
+                    numbers = (int *) realloc(numbers, 3 * graph_size * graph_size * sizeof (int));
                 } else {
-                    (*numbers)[index - 2] = src;
-                    (*numbers)[index - 1] = direction;
-                    (*numbers)[index] = full_num;
+                    numbers[index - 2] = src;
+                    numbers[index - 1] = direction;
+                    numbers[index] = full_num;
                     direction++;
                     if (direction == graph_size) {
                         direction = 0;
@@ -84,40 +86,45 @@ int extractGraphFromOutputFile(char *input_file_name, int **numbers) {
         previous_char_in_file = char_in_file;
     }
     fclose(edges_file);
-    return graph_size;
+    graph graph = createNewGraph(graph_size);
+    for (int k = 0; k < 3 * graph_size * graph_size - 1; k += 3) addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph);
+    free(numbers);
+    return graph;
 }
 
 /*
  * Функция создания графа из input файла
  */
-int extractGraphFromEdgesFile(char *input_file_name, int **numbers) {
+graph extractGraphFromEdgesFile(char *input_file_name) {
     FILE *edges_file = fopen(input_file_name, "rt");
     if (edges_file == NULL) {
         puts("\nInput file does not exist\n");
-        return -1;
+        exit(-1);
     }
-
     int char_in_file, last_char_in_file = EOF, graph_size = INT_MIN, counter = 0, m = 0;
-    int *arr = (int*) malloc(3 * sizeof(int*));
+    int *numbers = (int*) malloc(3 * sizeof(int*));
     while (!feof(edges_file)) {
         char_in_file = fgetc(edges_file);
         last_char_in_file = char_in_file;
-        fscanf(edges_file, "%d", &arr[counter]);
+        fscanf(edges_file, "%d", &numbers[counter]);
         if (m == 2) m = 0;
         else {
-            if (arr[counter] > graph_size) graph_size = arr[counter];
+            if (numbers[counter] > graph_size) graph_size = numbers[counter];
             m++;
         }
-        if (char_in_file == '\n' ) arr = (int *) realloc(arr, (counter + 1) * 3 * sizeof (int*));
+        if (char_in_file == '\n' ) numbers = (int *) realloc(numbers, (counter + 1) * 3 * sizeof (int*));
         counter++;
         if (last_char_in_file == EOF) {
             puts("\nFile is empty\n");
-            return -1;
+            exit(-1);
         }
     }
     fclose(edges_file);
-    *numbers = arr;
-    return ++graph_size;
+    ++graph_size;
+    graph graph = createNewGraph(graph_size);
+    for (int k = 0; k < 3 * graph_size * graph_size - 1; k += 3) addNewEdge(numbers[k], numbers[k + 1], numbers[k + 2], graph);
+    free(numbers);
+    return graph;
 }
 
 
@@ -137,7 +144,8 @@ int findPath(const int *parent, int end_vertex, int start_vertex, int *path_arra
  * Функция нахождения кратчайшего пути из заданной вершины (start_vertex) в определенную вершину (end_vertex).
  * Функция возвращает количество вершин, через которое необходимо пройти.
  */
-int findMinLength(int start_vertex, int end_vertex, graph graph, int size, int **to_return_distance, int *path_array) {
+int findMinLength(int start_vertex, int end_vertex, graph graph, int **to_return_distance, int *path_array) {
+    int size = graph->size;
     int *distance = (int *)malloc(size * sizeof(int));
     int *parent = (int *)malloc(size * sizeof(int));
     int counter = 0;
@@ -227,10 +235,10 @@ int deleteEdge(int vertex1, int vertex2, graph current_graph) {
 int addNewVertex(graph current_graph) {
     int size = current_graph->size + 1;
     int new_Number_Of_Vertex = current_graph->size;
-    current_graph->matrix = (int**) realloc(current_graph->matrix, size * sizeof(*current_graph->matrix));
+    current_graph->matrix = (int**) realloc(current_graph->matrix, size * sizeof(current_graph->matrix));
 
     for (int i = 0; i < size; i++) {
-        current_graph->matrix[i] = (int *) realloc(current_graph->matrix[i], (size + 1) * sizeof(int));
+        current_graph->matrix[i] = (int *) realloc(current_graph->matrix[i], size * sizeof(int));
         for (int j = size - 1; j < size; j++) current_graph->matrix[i][j] = 0;
     }
     for (int i = size - 1; i < size; i++) {
